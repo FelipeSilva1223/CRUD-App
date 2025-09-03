@@ -1,0 +1,14 @@
+Roteiro sugerido (você no volante):
+[1] Classe Produto: Id (int), Nome (string), Preco (decimal), Quantidade (int). Pode criar ToString() depois.
+[2] Armazenamento: List<Produto> no Program. Comece simples, sem repositório.
+[3] Criar(): ler dados do console, montar Produto e adicionar na lista.
+[4] Listar(): imprimir todos; se vazio, indicar que não há itens.
+[5] Detalhar(): pedir ID, procurar na lista e mostrar dados ou "não encontrado".
+[6] Atualizar(): pedir ID, permitir editar campos (pode aceitar Enter para manter valor atual).
+[7] Excluir(): pedir ID e remover da lista com confirmação.
+
+
+Só depois disso:
+[8] Validação mínima (nome não vazio, números ≥ 0).
+[9] Refatorar: extrair um repositório em memória (classe própria) — opcional.
+[10] Persistência JSON (salvar/carregar) — opcional.
