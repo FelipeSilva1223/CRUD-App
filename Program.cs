@@ -1,36 +1,31 @@
 ﻿namespace CRUD_App
 {
-    class Interfaces
+    class Produto
     {
+        public int Id { get; set; }
 
+        public string? Nome { get; set; }
 
-        public static int ExibirMenu()
+        public decimal Preco { get; set; }
+
+        public int Quantidade { get; set; }
+
+        public Produto(int id, string nome, decimal preco, int quantidade)
         {
-            Console.Clear();
-            Console.WriteLine("=== GERENCIADOR DE TAREFAS ===");
-            Console.WriteLine("1 - Adicionar tarefa");
-            Console.WriteLine("2 - Listar tarefas");
-            Console.WriteLine("3 - Editar tarefa");
-            Console.WriteLine("4 - Excluir tarefa");
-            Console.WriteLine("0 - Sair");
-            Console.Write("Escolha uma opção: ");
-
-            string entrada = Utilitarios.LerString();
-
-            return int.TryParse(entrada, out int opcao) ? opcao : -1;
-
+            this.Id = id;
+            this.Nome = nome;
+            this.Preco = preco;
+            this.Quantidade = quantidade;
         }
     }
     class Program
     {
-
-
         static void Main(String[] args)
         {
             bool continuar = true;
             do
             {
-                string mensagem = Utilitarios.LerString();
+                string mensagem = Utilitarios.LerDecimal();
                 Console.WriteLine(mensagem);
             } while (continuar);
 
