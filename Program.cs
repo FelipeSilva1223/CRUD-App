@@ -20,13 +20,36 @@
     }
     class Program
     {
+        static List<Produto> Produtos = new();
+        public static void CriarProduto()
+        {
+            int id = Utilitarios.LerInt("Qual o ID do produto?");
+            string nome = Utilitarios.LerString("Qual o nome do produto?");
+            decimal preco = Utilitarios.LerDecimal("Qual o valor?");
+            int quantidade = Utilitarios.LerInt("Quantos quer adicionar?");
+
+            Produto prdt = new Produto(id, nome, preco, quantidade);
+            Produtos.Add(prdt);
+        }
+
+        public static void MostrarProdutos()
+        {
+            Console.Clear();
+            Interfaces.Titulo("Lista de produtos");
+            foreach (Produto produto in Produtos)
+            {
+                Console.WriteLine($"\nID: {produto.Id}\nNome: {produto.Nome}");
+            }
+        }
         static void Main(String[] args)
         {
             bool continuar = true;
             do
             {
-                string mensagem = Utilitarios.LerDecimal();
-                Console.WriteLine(mensagem);
+                CriarProduto();
+                CriarProduto();
+                CriarProduto();
+                MostrarProdutos();
             } while (continuar);
 
         }

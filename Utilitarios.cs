@@ -8,21 +8,7 @@ using System.Threading.Tasks;
 namespace CRUD_App
 {
     public static class Utilitarios
-    {
-        public static void MensagemColorida(string mensagem, ConsoleColor cor)
-        {
-            var corAntiga = Console.ForegroundColor; // Salva a cor atual em uma variavel
-            Console.ForegroundColor = cor; // seta a cor nova
-            Console.WriteLine(mensagem);
-            Console.ForegroundColor = corAntiga; // volta pra cor antiga
-        }
-        public static void Tag(string mensagem, ConsoleColor cor)
-        {
-            var corAntiga = Console.ForegroundColor;
-            Console.ForegroundColor = cor;
-            Console.Write($"[{mensagem}]");
-            Console.ForegroundColor = corAntiga;
-        }
+    { 
         public static string LerString(string mensagem = "Digite algo")
         {
             while (true)
@@ -34,7 +20,7 @@ namespace CRUD_App
                     return entrada;
                 }
 
-                MensagemColorida("Entrada inválida. Tente novamente.", ConsoleColor.Yellow);
+                Interfaces.MensagemColorida("Entrada inválida. Tente novamente.", ConsoleColor.Yellow);
             }
         }
         public static int LerInt(string mensagem = "Digite um número")
@@ -47,10 +33,10 @@ namespace CRUD_App
                 {
                     return inteiroValidado;
                 }
-                MensagemColorida("Entrada inválida. Tente novamente.", ConsoleColor.Yellow);
+                Interfaces.MensagemColorida("Entrada inválida. Tente novamente.", ConsoleColor.Yellow);
             }
         }
-        public static string LerDecimal(string mensagem = "Digite um número")
+        public static decimal LerDecimal(string mensagem = "Digite um número")
         {
             var pt = new CultureInfo("pt-BR");
             while (true)
@@ -59,10 +45,11 @@ namespace CRUD_App
                 string entrada = (Console.ReadLine() ?? "").Trim();
                 if (decimal.TryParse(entrada, out decimal decimalValidado))
                 {
-                    return decimalValidado.ToString("F2");
+                    return decimalValidado;
                 }
-                MensagemColorida("Entrada inválida. Tente novamente.", ConsoleColor.Yellow);
+                Interfaces.MensagemColorida("Entrada inválida. Tente novamente.", ConsoleColor.Yellow);
             }
         }
+
     }
 }
