@@ -38,7 +38,7 @@
             Interfaces.Titulo("Lista de produtos");
             foreach (Produto produto in Produtos)
             {
-                Console.WriteLine($"\nID: {produto.Id}\nNome: {produto.Nome}");
+                Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\n");
             }
         }
         static void Main(String[] args)
