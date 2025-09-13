@@ -23,33 +23,67 @@
         static List<Produto> Produtos = new();
         public static void CriarProduto()
         {
-            int id = Utilitarios.LerInt("Qual o ID do produto?");
+            int id = Utilitarios.LerInt("Qual o n° de ID do produto?");
             string nome = Utilitarios.LerString("Qual o nome do produto?");
             decimal preco = Utilitarios.LerDecimal("Qual o valor?");
             int quantidade = Utilitarios.LerInt("Quantos quer adicionar?");
 
-            Produto prdt = new Produto(id, nome, preco, quantidade);
+            Produto prdt = new (id, nome, preco, quantidade);
             Produtos.Add(prdt);
         }
 
-        public static void MostrarProdutos()
+        public static void ListarProdutos()
         {
             Console.Clear();
             Interfaces.Titulo("Lista de produtos");
-            foreach (Produto produto in Produtos)
+            if (Produtos.Count > 0)
             {
-                Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\n");
+                foreach (Produto produto in Produtos)
+                {
+                    Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\n");
+                }
+            } else { Console.WriteLine("\n(Lista vazia)"); }
+        }
+        public static void BuscarPorID() {
+            if (Produtos.Count > 0)
+            {
+                int idEntrada = Utilitarios.LerInt("Qual o ID do produto?");
+                Produto? resultado = Produtos.Find(produto => produto.Id == idEntrada);
+                if (resultado == null)
+                {
+                    Console.WriteLine("Produto não encontrado");
+                    return;
+                }
+                Console.WriteLine(resultado.Nome);
+            } else Console.WriteLine("\n(Lista vazia)");
+        }
+        public static void EditarNomeProduto() // Função em construção
+        {
+            if (Produtos.Count > 0)
+            {
+                int idEntrada = Utilitarios.LerInt("Qual o n° de ID do produto?");
+                Produto? resultado = Produtos.Find(produto => produto.Id == idEntrada);
+                if (resultado == null)
+                {
+                    Console.WriteLine("Produto não encontrado");
+                    return;
+                } else
+                {
+                    int opcao = Utilitarios.LerInt("Qual dado vai ser editado?");
+                }
+            } else
+            {
+                Console.WriteLine("(Lista vazia)");
             }
         }
+
         static void Main(String[] args)
         {
             bool continuar = true;
             do
             {
-                CriarProduto();
-                CriarProduto();
-                CriarProduto();
-                MostrarProdutos();
+                ProcurarProduto();
+                Thread.Sleep(2000);
             } while (continuar);
 
         }
