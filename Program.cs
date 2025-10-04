@@ -28,8 +28,8 @@
             decimal preco = Utilitarios.LerDecimal("Qual o valor?");
             int quantidade = Utilitarios.LerInt("Quantos quer adicionar?");
 
-            Produto prdt = new (id, nome, preco, quantidade);
-            Produtos.Add(prdt);
+            Produto produto = new (id, nome, preco, quantidade);
+            Produtos.Add(produto);
         }
 
         public static void ListarProdutos()
@@ -57,7 +57,7 @@
                 Console.WriteLine(resultado.Nome);
             } else Console.WriteLine("\n(Lista vazia)");
         }
-        public static void EditarNomeProduto() // Função em construção
+        public static void EditarNomeProduto()
         {
             if (Produtos.Count > 0)
             {
@@ -69,7 +69,8 @@
                     return;
                 } else
                 {
-                    int opcao = Utilitarios.LerInt("Qual dado vai ser editado?");
+                    string novoNome = Utilitarios.LerString("Qual o novo nome do produto?");
+                    resultado.Nome = novoNome;
                 }
             } else
             {
@@ -82,7 +83,8 @@
             bool continuar = true;
             do
             {
-                ProcurarProduto();
+                CriarProduto();
+                BuscarPorID();
                 Thread.Sleep(2000);
             } while (continuar);
 
