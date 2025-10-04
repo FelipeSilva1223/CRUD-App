@@ -31,7 +31,6 @@
             Produto produto = new (id, nome, preco, quantidade);
             Produtos.Add(produto);
         }
-
         public static void ListarProdutos()
         {
             Console.Clear();
