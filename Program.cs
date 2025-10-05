@@ -8,73 +8,68 @@
 
         public decimal Preco { get; set; }
 
-        public int Quantidade { get; set; }
+        public int Estoque { get; set; }
 
-        public Produto(int id, string nome, decimal preco, int quantidade)
+        public Produto(int id, string nome, decimal preco)
         {
             this.Id = id;
             this.Nome = nome;
             this.Preco = preco;
-            this.Quantidade = quantidade;
+            this.Estoque = 0;
         }
     }
     class Program
     {
         static List<Produto> Produtos = new();
-        public static void CriarProduto()
+        public static bool VerificarLista()
+        {
+            return Produtos.Count > 0;
+        }
+        public static void CadastrarProduto()
         {
             int id = Utilitarios.LerInt("Qual o n° de ID do produto?");
             string nome = Utilitarios.LerString("Qual o nome do produto?");
             decimal preco = Utilitarios.LerDecimal("Qual o valor?");
-            int quantidade = Utilitarios.LerInt("Quantos quer adicionar?");
 
-            Produto produto = new (id, nome, preco, quantidade);
+            Produto produto = new (id, nome, preco);
             Produtos.Add(produto);
         }
         public static void ListarProdutos()
         {
             Console.Clear();
             Interfaces.Titulo("Lista de produtos");
-            if (Produtos.Count > 0)
+            foreach (Produto produto in Produtos)
             {
-                foreach (Produto produto in Produtos)
-                {
-                    Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\n");
-                }
-            } else { Console.WriteLine("\n(Lista vazia)"); }
+                Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\nValor: R$: {produto.Preco}");
+            }
         }
         public static void BuscarPorID() {
-            if (Produtos.Count > 0)
+            int idEntrada = Utilitarios.LerInt("Qual o ID do produto?");
+            Produto? resultado = Produtos.Find(produto => produto.Id == idEntrada);
+            if (resultado == null)
             {
-                int idEntrada = Utilitarios.LerInt("Qual o ID do produto?");
-                Produto? resultado = Produtos.Find(produto => produto.Id == idEntrada);
-                if (resultado == null)
-                {
-                    Console.WriteLine("Produto não encontrado");
-                    return;
-                }
-                Console.WriteLine(resultado.Nome);
-            } else Console.WriteLine("\n(Lista vazia)");
+                Console.WriteLine("Produto não encontrado");
+                return;
+            }
+            Console.WriteLine($"ID: {resultado.Id}\nNome: {resultado.Nome}\n");
         }
         public static void EditarNomeProduto()
         {
-            if (Produtos.Count > 0)
+            int idEntrada = Utilitarios.LerInt("Qual o n° de ID do produto?");
+            Produto? resultado = Produtos.Find(produto => produto.Id == idEntrada);
+            if (resultado == null)
             {
-                int idEntrada = Utilitarios.LerInt("Qual o n° de ID do produto?");
-                Produto? resultado = Produtos.Find(produto => produto.Id == idEntrada);
-                if (resultado == null)
-                {
-                    Console.WriteLine("Produto não encontrado");
-                    return;
-                } else
-                {
-                    string novoNome = Utilitarios.LerString("Qual o novo nome do produto?");
-                    resultado.Nome = novoNome;
-                }
+                Console.WriteLine("Produto não encontrado");
+                return;
             } else
             {
-                Console.WriteLine("(Lista vazia)");
+                string novoNome = Utilitarios.LerString("Qual o novo nome do produto?");
+                resultado.Nome = novoNome;
             }
+        }
+        public static void AdicionarProdutos()
+        {
+
         }
 
         static void Main(String[] args)
@@ -82,9 +77,14 @@
             bool continuar = true;
             do
             {
-                CriarProduto();
-                BuscarPorID();
-                Thread.Sleep(2000);
+                CadastrarProduto();
+                if (VerificarLista())
+                {
+                    ListarProdutos();
+                } else
+                {
+                    Console.WriteLine("(Lista Vazia)");
+                }
             } while (continuar);
 
         }

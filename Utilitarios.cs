@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 
 namespace CRUD_App
 {
@@ -38,7 +33,6 @@ namespace CRUD_App
         }
         public static decimal LerDecimal(string mensagem = "Digite um número")
         {
-            var pt = new CultureInfo("pt-BR");
             while (true)
             {
                 Console.WriteLine(mensagem + ": ");
