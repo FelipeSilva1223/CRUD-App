@@ -23,6 +23,23 @@
         static List<Produto> Produtos = new();
         public static bool TemProduto() => Produtos.Count > 0;
         static bool IdExiste(int id) => Produtos.Any(produto => produto.Id == id);
+        static bool Confirmar()
+        {
+            while (true)
+            {
+                Interfaces.Tag("ATENÇÃO", ConsoleColor.Yellow);
+                string opcao = Utilitarios.LerString("Tem certeza que deseja continuar?(S/N)").ToUpper();
+                if (opcao == "S")
+                {
+                    return true;
+                }
+                if (opcao == "N")
+                {
+                    return false;
+                }
+                Interfaces.MensagemColorida("Opção inválida.", ConsoleColor.Yellow);
+            }
+        }
         public static void CadastrarProduto()
         {
             int id;
@@ -41,10 +58,16 @@
             }
             string nome = Utilitarios.LerString("Qual o nome do produto?");
             decimal preco = Utilitarios.LerDecimal("Qual o preço?");
-
-            Produto produto = new (id, nome, preco);
-            Produtos.Add(produto);
-            Interfaces.MensagemColorida($"Produto {produto.Nome} cadastrado com sucesso!", ConsoleColor.Green);
+            Console.WriteLine($"ID: {id} - Nome: {nome} - Preço: {preco}");
+            if (Confirmar())
+            {
+                Produto produto = new(id, nome, preco);
+                Produtos.Add(produto);
+                Interfaces.MensagemColorida($"Produto {produto.Nome} cadastrado com sucesso!", ConsoleColor.Green);
+            } else
+            {
+                Console.WriteLine("Ação cancelada.");
+            }
         }
         public static void ListarProdutos()
         {
@@ -88,18 +111,27 @@
                 }
             }
         }
-        public static void MostrarPorID(Produto produto) {
+        public static void MostrarPorID() {
+            Produto produto = SelecionarProduto();
             Console.Clear();
             Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\nPreço: {produto.Preco:F2}\nEstoque: {produto.Estoque}");
         }
-        public static void EditarNome(Produto produto)
+        public static void EditarNome()
         {
+            Produto produto = SelecionarProduto();
             string novoNome = Utilitarios.LerString("Qual o novo nome do produto?");
-            produto.Nome = novoNome;
-            Interfaces.MensagemColorida($"Nome atualizado para {novoNome}", ConsoleColor.Green);
+            if (Confirmar())
+            {
+                produto.Nome = novoNome;
+                Interfaces.MensagemColorida($"Nome atualizado para {novoNome}", ConsoleColor.Green);
+            } else
+            {
+                Console.WriteLine("Ação cancelada.");
+            } 
         }
-        public static void EditarPreco(Produto produto)
+        public static void EditarPreco()
         {
+            Produto produto = SelecionarProduto();
             while (true)
             {
                 decimal preco = Utilitarios.LerDecimal("Qual o novo preco?");
@@ -113,22 +145,37 @@
                     Interfaces.MensagemColorida("O preço precisa ser diferente do anterior.", ConsoleColor.Yellow);
                     return;
                 }
-                produto.Preco = preco;
-                Interfaces.MensagemColorida($"Preço atualizado para: {preco:F2}", ConsoleColor.Green);
-                return;
+                if (Confirmar())
+                {
+                    produto.Preco = preco;
+                    Interfaces.MensagemColorida($"Preço atualizado para: {preco:F2}", ConsoleColor.Green);
+                    return;
+                } else
+                {
+                    Console.WriteLine("Ação cancelada.");
+                    return;
+                }
             }
         }
-        public static void AdicionarEstoque(Produto produto)
+        public static void AdicionarEstoque()
         {
+            Produto produto = SelecionarProduto();
             while (true)
             {
                 Console.WriteLine($"Estoque atual de {produto.Nome}: {produto.Estoque}");
                 int unidades = Utilitarios.LerInt("Quantas unidades deseja adicionar?");
                 if (unidades > 0)
                 {
-                    produto.Estoque += unidades;
-                    Interfaces.MensagemColorida($"{unidades} unidade{(unidades > 1 ? "s": "")} adicionado{(unidades > 1 ? "s":"")} com sucesso!", ConsoleColor.Green);
-                    return;
+                    if (Confirmar())
+                    {
+                        produto.Estoque += unidades;
+                        Interfaces.MensagemColorida($"{unidades} unidade{(unidades > 1 ? "s" : "")} adicionado{(unidades > 1 ? "s" : "")} com sucesso!", ConsoleColor.Green);
+                        return;
+                    } else
+                    {
+                        Console.WriteLine("Ação cancelada");
+                        return;
+                    }
                 }
                 else
                 {
@@ -136,8 +183,9 @@
                 }
             }
         }
-        public static void RetirarEstoque(Produto produto)
+        public static void RetirarEstoque()
         {
+            Produto produto = SelecionarProduto();
             if (produto.Estoque == 0)
             {
                 Console.WriteLine("(Estoque zerado)");
@@ -154,8 +202,28 @@
                 Interfaces.MensagemColorida("Retire pelo menos 1 unidade", ConsoleColor.Yellow);
                 return;
             }
-            produto.Estoque -= unidades;
-            Interfaces.MensagemColorida($"{unidades} unidade{(unidades > 1 ? "s":"")} retirado{(unidades > 1 ? "s":"")}", ConsoleColor.Green);
+            if (Confirmar())
+            {
+                produto.Estoque -= unidades;
+                Interfaces.MensagemColorida($"{unidades} unidade{(unidades > 1 ? "s" : "")} retirado{(unidades > 1 ? "s" : "")}", ConsoleColor.Green);
+            } else
+            {
+                Console.WriteLine("Ação cancelada.");
+            }
+        }
+        public static void ApagarProduto()
+        {
+            Produto produto = SelecionarProduto();
+            string? nome = produto.Nome;
+            if (Confirmar())
+            {
+                Produtos.Remove(produto);
+                Interfaces.MensagemColorida($"Produto {nome} foi apagado com sucesso.", ConsoleColor.Red);
+            }
+            else
+            {
+                Console.WriteLine("Ação cancelada.");
+            }
         }
 
         static void Main(String[] args)
@@ -172,6 +240,7 @@
                 Console.WriteLine("Editar preço de um produto - 5");
                 Console.WriteLine("Adicionar estoque - 6");
                 Console.WriteLine("Retirar estoque - 7");
+                Console.WriteLine("Apagar produto - 8");
                 Console.WriteLine("Sair - 0");
                 Console.WriteLine(Interfaces.Linhas(23, '='));
                 int opcao = Utilitarios.LerInt("O que deseja fazer?");
@@ -184,20 +253,23 @@
                         ListarProdutos();
                         break;
                     case 3:
-                        MostrarPorID(SelecionarProduto());
+                        MostrarPorID();
                         break;
                     case 4:
-                        EditarNome(SelecionarProduto());
+                        EditarNome();
                         break;
                     case 5:
-                        EditarPreco(SelecionarProduto());
+                        EditarPreco();
                         break;
                     case 6:
-                        AdicionarEstoque(SelecionarProduto());
+                        AdicionarEstoque();
                         break;
                     case 7:
-                        RetirarEstoque(SelecionarProduto());
+                        RetirarEstoque();
                         break;
+                    case 8:
+                        ApagarProduto();
+                            break;
                     case 0:
                         continuar = false;
                         Console.WriteLine("Obrigado por usar nosso sistema");

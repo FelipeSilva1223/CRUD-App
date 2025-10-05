@@ -13,7 +13,7 @@
         {
             var corAntiga = Console.ForegroundColor;
             Console.ForegroundColor = cor;
-            Console.Write($"[{mensagem}]");
+            Console.Write($"[{mensagem}] ");
             Console.ForegroundColor = corAntiga;
         }
         public static string Linhas(int quantidade, char caractere = '=')
