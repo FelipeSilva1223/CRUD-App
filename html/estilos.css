@@ -17,10 +17,12 @@ body {
     width: 400px;
     gap: 10px;
     border-radius: 10px;
+    border: 2px solid black;
 
 }
 .menu > button {
     margin: 10px;
     width: 100px;
-    border-radius: 5px;
+    /*border: 2px solid rgb(0, 0, 255);
+    border-radius: 5px;*/
 }

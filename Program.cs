@@ -28,7 +28,24 @@
             while (true)
             {
                 Interfaces.Tag("ATENÇÃO", ConsoleColor.Yellow);
-                string opcao = Utilitarios.LerString("Tem certeza que deseja continuar?(S/N)").ToUpper();
+                string opcao = Utilitarios.LerString("Tem certeza que deseja confirmar ação?(S/N)").ToUpper();
+                if (opcao == "S")
+                {
+                    return true;
+                }
+                if (opcao == "N")
+                {
+                    return false;
+                }
+                Interfaces.MensagemColorida("Opção inválida.", ConsoleColor.Yellow);
+            }
+        }
+        static bool Continuar()
+        {
+            while (true)
+            {
+                Interfaces.Tag("ATENÇÃO", ConsoleColor.Yellow);
+                string opcao = Utilitarios.LerString("Deseja continuar?(S/N)").ToUpper();
                 if (opcao == "S")
                 {
                     return true;
@@ -49,7 +66,7 @@
                 if (IdExiste(entrada))
                 {
                     Interfaces.MensagemColorida("ID já cadastrado", ConsoleColor.Yellow);
-                    Thread.Sleep(1000);
+                    Continuar();
                 } else
                 {
                     id = entrada;
@@ -58,12 +75,12 @@
             }
             string nome = Utilitarios.LerString("Qual o nome do produto?");
             decimal preco = Utilitarios.LerDecimal("Qual o preço?");
-            Console.WriteLine($"ID: {id} - Nome: {nome} - Preço: {preco}");
+            Console.WriteLine($"ID: {id} - Nome: {nome} - Preço: R$ {preco:F2}");
             if (Confirmar())
             {
                 Produto produto = new(id, nome, preco);
                 Produtos.Add(produto);
-                Interfaces.MensagemColorida($"Produto {produto.Nome} cadastrado com sucesso!", ConsoleColor.Green);
+                Interfaces.MensagemColorida($"Produto \"{produto.Nome}\" cadastrado com sucesso!", ConsoleColor.Green);
             } else
             {
                 Console.WriteLine("Ação cancelada.");
@@ -119,6 +136,7 @@
         public static void EditarNome()
         {
             Produto produto = SelecionarProduto();
+            if(produto == null) { return; }
             string novoNome = Utilitarios.LerString("Qual o novo nome do produto?");
             if (Confirmar())
             {
@@ -131,7 +149,8 @@
         }
         public static void EditarPreco()
         {
-            Produto produto = SelecionarProduto();
+            Produto produto = SelecionarProduto(); 
+            if(produto == null) { return; }
             while (true)
             {
                 decimal preco = Utilitarios.LerDecimal("Qual o novo preco?");
@@ -148,7 +167,7 @@
                 if (Confirmar())
                 {
                     produto.Preco = preco;
-                    Interfaces.MensagemColorida($"Preço atualizado para: {preco:F2}", ConsoleColor.Green);
+                    Interfaces.MensagemColorida($"Preço atualizado para: R$ {preco:F2}", ConsoleColor.Green);
                     return;
                 } else
                 {
@@ -169,7 +188,7 @@
                     if (Confirmar())
                     {
                         produto.Estoque += unidades;
-                        Interfaces.MensagemColorida($"{unidades} unidade{(unidades > 1 ? "s" : "")} adicionado{(unidades > 1 ? "s" : "")} com sucesso!", ConsoleColor.Green);
+                        Interfaces.MensagemColorida($"{unidades} unidade{Pluralizar(unidades)} adicionado{Pluralizar(unidades)} a {produto.Nome} com sucesso!", ConsoleColor.Green);
                         return;
                     } else
                     {
@@ -179,13 +198,15 @@
                 }
                 else
                 {
-                    Interfaces.MensagemColorida("Necessário ao menos uma unidade.", ConsoleColor.Yellow);
+                    Interfaces.MensagemColorida("Necessário adicionar pelo menos uma unidade.", ConsoleColor.Yellow);
+                    Continuar();
                 }
             }
         }
-        public static void RetirarEstoque()
+        public static void RetirarEstoque() 
         {
             Produto produto = SelecionarProduto();
+            if(produto == null) { return; }
             if (produto.Estoque == 0)
             {
                 Console.WriteLine("(Estoque zerado)");
@@ -205,7 +226,7 @@
             if (Confirmar())
             {
                 produto.Estoque -= unidades;
-                Interfaces.MensagemColorida($"{unidades} unidade{(unidades > 1 ? "s" : "")} retirado{(unidades > 1 ? "s" : "")}", ConsoleColor.Green);
+                Interfaces.MensagemColorida($"{unidades} unidade{Pluralizar(unidades)} retirado{Pluralizar(unidades)} de {produto.Nome}", ConsoleColor.Green);
             } else
             {
                 Console.WriteLine("Ação cancelada.");
@@ -214,15 +235,27 @@
         public static void ApagarProduto()
         {
             Produto produto = SelecionarProduto();
+            if(produto == null) { return; }
             string? nome = produto.Nome;
             if (Confirmar())
             {
                 Produtos.Remove(produto);
-                Interfaces.MensagemColorida($"Produto {nome} foi apagado com sucesso.", ConsoleColor.Red);
+                Interfaces.MensagemColorida($"Produto \"{nome}\" foi apagado com sucesso.", ConsoleColor.Green);
             }
             else
             {
                 Console.WriteLine("Ação cancelada.");
+            }
+        }
+        public static string Pluralizar(int quantidade)
+        {
+            if (quantidade == 1)
+            {
+                return "";
+            }
+            else
+            {
+                return "s";
             }
         }
 
@@ -279,7 +312,7 @@
                         Interfaces.MensagemColorida("Opção inválida.", ConsoleColor.Yellow);
                         break;
                 }
-                Console.WriteLine("Pressione qualquer tecla para voltar ao menu inicial");
+                Console.WriteLine("Pressione qualquer tecla para voltar ao menu inicial"); // So to aqui por causa do console, na interface n vai ter
                 Console.ReadKey();
             } while (continuar);
 

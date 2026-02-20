@@ -7,5 +7,13 @@
 </head>
 <body>
     <h1>Cadatrar produto</h1>
+    <p id>Nome do produto</p> <input type="text" id="nome_produto" name="nome_produto"/>
+    <button id="botao" onclick="Teste()">Cadastrar</button>
+    <script>
+        function Teste(){
+            var texto = document.getElementById("nome_produto").innerText
+            alert(texto)
+        }
+    </script>
 </body>
 </html>
