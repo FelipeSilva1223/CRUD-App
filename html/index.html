@@ -3,22 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Cadastrar produto</title>
     <title>Pagina inicial</title>
     <link rel="stylesheet" href="estilos.css">
 
 </head>
-<body>
-    <h1 style="text-align: center;">CRUD APP Página inicial</h1>
-    <div class="container">
-        <div class="menu">
-            <button>Cadastrar</button>
-            <button>Exibir todos</button>
-            <button>Editar nome</button>
-            <button>Editar preço</button>
-            <button>Adicionar estoque</button>
-            <button>Retirar estoque</button>
+<body class="container-fluid">
+    <div class="">
+        <div>
+            <div class="pt-2 pb-2 text-center">
+                Gerenciador de Estoque v1.0
+            </div>
+            <div class="">
+                <div class="nav">
+                    <div id="cadastrar" class="collapse">
+                        <h3>Página de cadastrar itens</h3>
+                    </div>
+                    <div id="lista-itens" class="collapse">
+                        <h3>Lista de itens</h3>
+                    </div>
+                </div>
+            </div>
         </div>
-
     </div>
+    <div class="row">
+    <div name="botoes" class="col-1">
+        <button data-bs-toggle="collapse" data-bs-target="#cadastrar" class="btn btn-secondary">Cadastrar</button>
+        <button data-bs-toggle="collapse" data-bs-target="#lista-itens" class="btn btn-secondary">Lista de itens</button>
+    </div>
+    <div class="col border">
+        <table id="tabela" class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Preço</th>
+                    <th>Estoque</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>01</td>
+                    <td>Pão</td>
+                    <td>R$ 0,50</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>02</td>
+                    <td>Café</td>
+                    <td>R$ 6,99</td>
+                    <td>0</td>
+                </tr>
+                            <tr>
+                    <td>03</td>
+                    <td>Arroz</td>
+                    <td>R$ 19,00</td>
+                    <td>0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 </html>

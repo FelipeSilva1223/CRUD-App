@@ -6,15 +6,14 @@
 
         public string? Nome { get; set; }
 
-        public decimal Preco { get; set; }
+        public decimal Valor { get; set; }
 
         public int Estoque { get; set; }
 
-        public Produto(int id, string nome, decimal preco)
+        public Produto(string nome, decimal preco)
         {
-            this.Id = id;
             this.Nome = nome;
-            this.Preco = preco;
+            this.Valor = preco;
             this.Estoque = 0;
         }
     }
@@ -59,28 +58,13 @@
         }
         public static void CadastrarProduto()
         {
-            int id;
-            while (true)
-            {
-                int entrada = Utilitarios.LerInt("Com qual n° de ID deseja cadastrar o produto?");
-                if (IdExiste(entrada))
-                {
-                    Interfaces.MensagemColorida("ID já cadastrado", ConsoleColor.Yellow);
-                    Continuar();
-                } else
-                {
-                    id = entrada;
-                    break;
-                }
-            }
             string nome = Utilitarios.LerString("Qual o nome do produto?");
-            decimal preco = Utilitarios.LerDecimal("Qual o preço?");
-            Console.WriteLine($"ID: {id} - Nome: {nome} - Preço: R$ {preco:F2}");
+            decimal valor = Utilitarios.LerDecimal("Qual o valor?");
+            Console.WriteLine($"Nome: {nome} - Preço: R$ {valor:F2}");
             if (Confirmar())
             {
-                Produto produto = new(id, nome, preco);
-                Produtos.Add(produto);
-                Interfaces.MensagemColorida($"Produto \"{produto.Nome}\" cadastrado com sucesso!", ConsoleColor.Green);
+                int id = DataBase.CadastrarProduto(nome, valor);
+                Interfaces.MensagemColorida($"Produto \"{nome}\" (ID: {id} ) cadastrado com sucesso!", ConsoleColor.Green);
             } else
             {
                 Console.WriteLine("Ação cancelada.");
@@ -94,7 +78,7 @@
             {
                 foreach (Produto produto in Produtos)
                 {
-                    Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\nValor: R$: {produto.Preco:F2}\nEstoque: {produto.Estoque}\n");
+                    Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\nValor: R$: {produto.Valor:F2}\nEstoque: {produto.Estoque}\n");
                 }
             }
             else
@@ -130,8 +114,9 @@
         }
         public static void MostrarPorID() {
             Produto produto = SelecionarProduto();
+            if(produto == null) { return; }
             Console.Clear();
-            Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\nPreço: {produto.Preco:F2}\nEstoque: {produto.Estoque}");
+            Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\nPreço: {produto.Valor:F2}\nEstoque: {produto.Estoque}");
         }
         public static void EditarNome()
         {
@@ -147,7 +132,7 @@
                 Console.WriteLine("Ação cancelada.");
             } 
         }
-        public static void EditarPreco()
+        public static void EditarValor()
         {
             Produto produto = SelecionarProduto(); 
             if(produto == null) { return; }
@@ -159,14 +144,14 @@
                     Interfaces.MensagemColorida("Preço não pode ser negativo", ConsoleColor.Yellow);
                     return;
                 }
-                if (preco == produto.Preco)
+                if (preco == produto.Valor)
                 {
                     Interfaces.MensagemColorida("O preço precisa ser diferente do anterior.", ConsoleColor.Yellow);
                     return;
                 }
                 if (Confirmar())
                 {
-                    produto.Preco = preco;
+                    produto.Valor = preco;
                     Interfaces.MensagemColorida($"Preço atualizado para: R$ {preco:F2}", ConsoleColor.Green);
                     return;
                 } else
@@ -179,6 +164,7 @@
         public static void AdicionarEstoque()
         {
             Produto produto = SelecionarProduto();
+            if(produto == null) { return; }
             while (true)
             {
                 Console.WriteLine($"Estoque atual de {produto.Nome}: {produto.Estoque}");
@@ -212,6 +198,7 @@
                 Console.WriteLine("(Estoque zerado)");
                 return;
             }
+            Console.WriteLine($"Estoque atual de {produto.Nome}: {produto.Estoque}");
             int unidades = Utilitarios.LerInt("Quantas unidades deseja retirar?");
             if (unidades > produto.Estoque)
             {
@@ -262,6 +249,7 @@
         static void Main(String[] args)
         {
             bool continuar = true;
+            DataBase.AbrirConexao();
             do
             {
                 Console.Clear();
@@ -270,7 +258,7 @@
                 Console.WriteLine("Ver lista de produtos - 2");
                 Console.WriteLine("Ver produto - 3");
                 Console.WriteLine("Editar nome de um produto - 4");
-                Console.WriteLine("Editar preço de um produto - 5");
+                Console.WriteLine("Editar valor de um produto - 5");
                 Console.WriteLine("Adicionar estoque - 6");
                 Console.WriteLine("Retirar estoque - 7");
                 Console.WriteLine("Apagar produto - 8");
@@ -292,7 +280,7 @@
                         EditarNome();
                         break;
                     case 5:
-                        EditarPreco();
+                        EditarValor();
                         break;
                     case 6:
                         AdicionarEstoque();
