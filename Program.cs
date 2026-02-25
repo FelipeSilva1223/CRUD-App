@@ -10,8 +10,9 @@
 
         public int Estoque { get; set; }
 
-        public Produto(string nome, decimal preco)
+        public Produto(int id, string nome, decimal preco, int estoque)
         {
+            this.Id = id;
             this.Nome = nome;
             this.Valor = preco;
             this.Estoque = 0;
@@ -19,9 +20,6 @@
     }
     class Program
     {
-        static List<Produto> Produtos = new();
-        public static bool TemProduto() => Produtos.Count > 0;
-        static bool IdExiste(int id) => Produtos.Any(produto => produto.Id == id);
         static bool Confirmar()
         {
             while (true)
@@ -73,12 +71,13 @@
         public static void ListarProdutos()
         {
             Console.Clear();
+            List<Produto> produtos = DataBase.ListaProdutos();
             Interfaces.Titulo("Lista de produtos");
-            if (TemProduto())
+            if (produtos.Count > 0)
             {
-                foreach (Produto produto in Produtos)
+                foreach (Produto item in produtos)
                 {
-                    Console.WriteLine($"ID: {produto.Id}\nNome: {produto.Nome}\nValor: R$: {produto.Valor:F2}\nEstoque: {produto.Estoque}\n");
+                    Console.WriteLine($"ID: {item.Id}\nNome: {item.Nome}\nValor: R$: {item.Valor:F2}\nEstoque: {item.Estoque}\n");
                 }
             }
             else
@@ -86,12 +85,13 @@
                 Console.WriteLine("(Lista Vazia)");
             }
         }
-        public static Produto SelecionarProduto()
+        public static Produto? SelecionarProduto()
         {
             while (true)
             {
+                var produtos = DataBase.ListaProdutos();
                 int idEntrada = Utilitarios.LerInt("Qual o ID do produto?");
-                Produto? resultado = Produtos.Find(produto => produto.Id == idEntrada);
+                Produto? resultado = produtos.Find(produto => produto.Id == idEntrada);
                 if (resultado != null)
                 {
                     return resultado;
@@ -120,40 +120,62 @@
         }
         public static void EditarNome()
         {
-            Produto produto = SelecionarProduto();
+            Produto? produto = SelecionarProduto();
             if(produto == null) { return; }
+            string nomeAntigo = produto.Nome;
             string novoNome = Utilitarios.LerString("Qual o novo nome do produto?");
             if (Confirmar())
             {
-                produto.Nome = novoNome;
-                Interfaces.MensagemColorida($"Nome atualizado para {novoNome}", ConsoleColor.Green);
+                int resultado = DataBase.EditarNome(produto.Id, novoNome);
+                if (resultado == 0)
+                {
+                    Interfaces.MensagemColorida("Falha em renomear produto", ConsoleColor.Red);
+                } 
+                else if (resultado == 1)
+                {
+                    Interfaces.MensagemColorida($"{nomeAntigo} atualizado para {novoNome}", ConsoleColor.Green);
+                } 
+                else 
+                {
+                    Interfaces.Tag("ERRO", ConsoleColor.Red);
+                }
             } else
             {
-                Console.WriteLine("Ação cancelada.");
+                Interfaces.MensagemColorida("Ação cancelada", ConsoleColor.Yellow);
             } 
         }
         public static void EditarValor()
         {
-            Produto produto = SelecionarProduto(); 
+            Produto? produto = SelecionarProduto(); 
             if(produto == null) { return; }
             while (true)
             {
-                decimal preco = Utilitarios.LerDecimal("Qual o novo preco?");
-                if (preco < 0)
+                decimal novoValor = Utilitarios.LerDecimal("Qual o novo valor?");
+                if (novoValor < 0)
                 {
-                    Interfaces.MensagemColorida("Preço não pode ser negativo", ConsoleColor.Yellow);
+                    Interfaces.MensagemColorida("Valor não pode ser negativo", ConsoleColor.Yellow);
                     return;
                 }
-                if (preco == produto.Valor)
+                else if (novoValor == produto.Valor)
                 {
-                    Interfaces.MensagemColorida("O preço precisa ser diferente do anterior.", ConsoleColor.Yellow);
+                    Interfaces.MensagemColorida("O valor precisa ser diferente do anterior.", ConsoleColor.Yellow);
                     return;
                 }
                 if (Confirmar())
                 {
-                    produto.Valor = preco;
-                    Interfaces.MensagemColorida($"Preço atualizado para: R$ {preco:F2}", ConsoleColor.Green);
-                    return;
+                    int resultado = DataBase.EditarValor(produto.Id, novoValor);
+                    if (resultado == 1)
+                    {
+                        Interfaces.MensagemColorida($"Preço atualizado para: R$ {novoValor:F2}", ConsoleColor.Green);
+                    }
+                    else if (resultado == 0)
+                    {
+                        Interfaces.MensagemColorida("Falha ao atualizar valor", ConsoleColor.Red);
+                    }
+                    else
+                    {
+                        Interfaces.Tag("ERRO", ConsoleColor.Red);
+                    }
                 } else
                 {
                     Console.WriteLine("Ação cancelada.");
@@ -161,9 +183,9 @@
                 }
             }
         }
-        public static void AdicionarEstoque()
+        public static void AtualizarEstoque()
         {
-            Produto produto = SelecionarProduto();
+            Produto? produto = SelecionarProduto();
             if(produto == null) { return; }
             while (true)
             {
@@ -173,12 +195,25 @@
                 {
                     if (Confirmar())
                     {
-                        produto.Estoque += unidades;
-                        Interfaces.MensagemColorida($"{unidades} unidade{Pluralizar(unidades)} adicionado{Pluralizar(unidades)} a {produto.Nome} com sucesso!", ConsoleColor.Green);
-                        return;
+                        int resultado = DataBase.AtualizarEstoque(produto.Id, unidades);
+                        if (resultado == 1)
+                        {
+                            Interfaces.MensagemColorida($"{unidades} unidade{Pluralizar(unidades)} adicionado{Pluralizar(unidades)} a {produto.Nome} com sucesso!", ConsoleColor.Green);
+                            return;
+                        }
+                        else if (resultado == 0)
+                        {
+                            Interfaces.MensagemColorida("Erro ao atualziar estoque", ConsoleColor.Red);
+                            return;
+                        }
+                        else
+                        {
+                            Interfaces.Tag("ERRO", ConsoleColor.Red);
+                            return;
+                        }
                     } else
                     {
-                        Console.WriteLine("Ação cancelada");
+                        Interfaces.MensagemColorida("Ação cancelada", ConsoleColor.Yellow);
                         return;
                     }
                 }
@@ -189,49 +224,29 @@
                 }
             }
         }
-        public static void RetirarEstoque() 
-        {
-            Produto produto = SelecionarProduto();
-            if(produto == null) { return; }
-            if (produto.Estoque == 0)
-            {
-                Console.WriteLine("(Estoque zerado)");
-                return;
-            }
-            Console.WriteLine($"Estoque atual de {produto.Nome}: {produto.Estoque}");
-            int unidades = Utilitarios.LerInt("Quantas unidades deseja retirar?");
-            if (unidades > produto.Estoque)
-            {
-                Interfaces.MensagemColorida("Estoque insuficiente", ConsoleColor.Yellow);
-                return;
-            }
-            if (unidades < 1)
-            {
-                Interfaces.MensagemColorida("Retire pelo menos 1 unidade", ConsoleColor.Yellow);
-                return;
-            }
-            if (Confirmar())
-            {
-                produto.Estoque -= unidades;
-                Interfaces.MensagemColorida($"{unidades} unidade{Pluralizar(unidades)} retirado{Pluralizar(unidades)} de {produto.Nome}", ConsoleColor.Green);
-            } else
-            {
-                Console.WriteLine("Ação cancelada.");
-            }
-        }
         public static void ApagarProduto()
         {
-            Produto produto = SelecionarProduto();
+            Produto? produto = SelecionarProduto();
             if(produto == null) { return; }
             string? nome = produto.Nome;
             if (Confirmar())
             {
-                Produtos.Remove(produto);
-                Interfaces.MensagemColorida($"Produto \"{nome}\" foi apagado com sucesso.", ConsoleColor.Green);
+                int resultado = DataBase.ApagarProduto(produto.Id);
+                if (resultado == 1) {
+                    Interfaces.MensagemColorida($"Produto \"{nome}\" foi apagado com sucesso.", ConsoleColor.Green);
+                }
+                else if (resultado == 0)
+                {
+                    Interfaces.MensagemColorida("Erro ao apagar produto", ConsoleColor.Red);
+                }
+                else
+                {
+                    Interfaces.Tag("ERRO", ConsoleColor.Red);
+                }
             }
             else
             {
-                Console.WriteLine("Ação cancelada.");
+                Interfaces.MensagemColorida("Ação cancelada", ConsoleColor.Yellow);
             }
         }
         public static string Pluralizar(int quantidade)
@@ -259,9 +274,8 @@
                 Console.WriteLine("Ver produto - 3");
                 Console.WriteLine("Editar nome de um produto - 4");
                 Console.WriteLine("Editar valor de um produto - 5");
-                Console.WriteLine("Adicionar estoque - 6");
-                Console.WriteLine("Retirar estoque - 7");
-                Console.WriteLine("Apagar produto - 8");
+                Console.WriteLine("Atualizar estoque - 6");
+                Console.WriteLine("Apagar produto - 7");
                 Console.WriteLine("Sair - 0");
                 Console.WriteLine(Interfaces.Linhas(23, '='));
                 int opcao = Utilitarios.LerInt("O que deseja fazer?");
@@ -283,12 +297,9 @@
                         EditarValor();
                         break;
                     case 6:
-                        AdicionarEstoque();
+                        AtualizarEstoque();
                         break;
                     case 7:
-                        RetirarEstoque();
-                        break;
-                    case 8:
                         ApagarProduto();
                             break;
                     case 0:
