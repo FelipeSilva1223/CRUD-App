@@ -15,7 +15,7 @@
             this.Id = id;
             this.Nome = nome;
             this.Valor = preco;
-            this.Estoque = 0;
+            this.Estoque = estoque;
         }
     }
     class Program
@@ -144,7 +144,7 @@
                 Interfaces.MensagemColorida("Ação cancelada", ConsoleColor.Yellow);
             } 
         }
-        public static void EditarValor()
+        public static void AtualizarValor()
         {
             Produto? produto = SelecionarProduto(); 
             if(produto == null) { return; }
@@ -163,18 +163,21 @@
                 }
                 if (Confirmar())
                 {
-                    int resultado = DataBase.EditarValor(produto.Id, novoValor);
+                    int resultado = DataBase.AtualizarValor(produto.Id, novoValor);
                     if (resultado == 1)
                     {
                         Interfaces.MensagemColorida($"Preço atualizado para: R$ {novoValor:F2}", ConsoleColor.Green);
+                        return;
                     }
                     else if (resultado == 0)
                     {
                         Interfaces.MensagemColorida("Falha ao atualizar valor", ConsoleColor.Red);
+                        return;
                     }
                     else
                     {
                         Interfaces.Tag("ERRO", ConsoleColor.Red);
+                        return;
                     }
                 } else
                 {
@@ -294,7 +297,7 @@
                         EditarNome();
                         break;
                     case 5:
-                        EditarValor();
+                        AtualizarValor();
                         break;
                     case 6:
                         AtualizarEstoque();

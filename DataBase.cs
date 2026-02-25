@@ -116,7 +116,7 @@ namespace CRUD_App
                 }
             }
         }
-        internal static int EditarValor(int id, decimal novoValor)
+        internal static int AtualizarValor(int id, decimal novoValor)
         {
             using (var conexao = new SqliteConnection(connStr))
             {
